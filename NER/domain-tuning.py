@@ -129,6 +129,32 @@ class DataProcessor(object):
         return self._create_examples_without_replacement(
             self._read_pkl(os.path.join(data_dir, "twitter_general.pkl")), "twitter_general")
 
+    def get_ikst_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_pkl(os.path.join(data_dir, "ikst_train.pkl")), "ikst_train")
+
+    def get_ikst_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_pkl(os.path.join(data_dir, "ikst_test.pkl")), "ikst_test")
+
+    def get_bc5cdr_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_pkl(os.path.join(data_dir, "bc5cdr_train.pkl")), "bc5cdr_train")
+
+    def get_bc5cdr_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_pkl(os.path.join(data_dir, "bc5cdr_test.pkl")), "bc5cdr_test")
+
+    def get_bc5cdr_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_pkl(os.path.join(data_dir, "bc5cdr_dev.pkl")), "bc5cdr_dev")
+    
+
     def get_labels(self, data_dir):
         """See base class."""
         return ['B', 'I', 'O']
@@ -168,14 +194,16 @@ class BERTDataset(Dataset):
         self.sample_counter = 0
 
         processor = DataProcessor()
-        self.examples = processor.get_sep_twitter_train_examples(data_dir) # change here for switching between train/test or whole PPCEME mode
+        self.examples = processor.get_ikst_train_examples(data_dir)
+        # self.examples = processor.get_sep_twitter_train_examples(data_dir) # change here for switching between train/test or whole PPCEME mode
 
         # use test examples in unsupervised domain tuning
-        test_examples = processor.get_sep_twitter_test_examples(data_dir)
+        test_examples = processor.get_ikst_test_examples(data_dir)
+        # test_examples = processor.get_sep_twitter_test_examples(data_dir)
         self.examples.extend(test_examples)
 
         # hybrid domain tuning
-        orig_domain_examples = random.sample(processor.get_conll_train_examples(data_dir), len(self.examples))
+        orig_domain_examples = random.sample(processor.get_bc5cdr_train_examples(data_dir) + processor.get_bc5cdr_test_examples(data_dir) + processor.get_bc5cdr_dev_examples(data_dir), len(self.examples))
         # orig_domain_examples = processor.get_conll_train_examples(data_dir)
         self.examples.extend(orig_domain_examples)
 
