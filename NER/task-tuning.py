@@ -735,6 +735,8 @@ def main():
         nb_test_steps, nb_test_examples = 0, 0
         test_TP, test_FP, test_FN = 0, 0, 0
 
+        output_predictions = []
+
         for input_ids, input_mask, segment_ids, label_ids, label_mask in tqdm(test_dataloader, desc="Testing"):
             input_ids = input_ids.to(device)
             input_mask = input_mask.to(device)
@@ -753,6 +755,7 @@ def main():
             tmp_test_correct, tmp_test_total = accuracy(logits, label_ids, label_mask)
             tplist = true_and_pred(logits, label_ids, label_mask)
             for trues, preds in tplist:
+                output_predictions.append(preds)
                 TP, FP, FN = compute_tfpn(trues, preds, label_map)
                 test_TP += TP
                 test_FP += FP
@@ -773,9 +776,18 @@ def main():
         output_test_file = os.path.join(args.output_dir, "test_results.txt")
         with open(output_test_file, "w") as writer:
             logger.info("***** Test results *****")
-            for key in sorted(result.keys()):
-                logger.info("  %s = %s", key, str(result[key]))
-                writer.write("%s = %s\n" % (key, str(result[key])))
+            # for key in sorted(result.keys()):
+            #     logger.info("  %s = %s", key, str(result[key]))
+            #     writer.write("%s = %s\n" % (key, str(result[key])))
+
+            for i,pred in enumerate(output_predictions):
+                tokens = test_examples[i][0]
+                true_labels = test_examples[i][1]
+
+                for j,word in enumerate(tokens):
+                    writer.write(word + ' ' + pred[j] + ' ' + true_labels[j] + '\n')
+                writer.write('\n')
+
 
 if __name__ == "__main__":
     main()
