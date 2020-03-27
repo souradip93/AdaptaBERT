@@ -748,7 +748,7 @@ def main():
             label_mask = label_mask.to(device)
 
             with torch.no_grad():
-                tmp_test_loss = model(input_ids, segment_ids, input_mask, label_ids, label_mask)
+                tmp_test_loss = model(input_ids, segment_ids, input_mask, label_list, label_mask)
                 logits = model(input_ids, segment_ids, input_mask)
 
             logits = logits.detach().cpu().numpy()
