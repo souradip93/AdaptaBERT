@@ -203,7 +203,15 @@ class BERTDataset(Dataset):
         self.examples.extend(test_examples)
 
         # hybrid domain tuning
-        orig_domain_examples = random.sample(processor.get_bc5cdr_train_examples(data_dir) + processor.get_bc5cdr_test_examples(data_dir) + processor.get_bc5cdr_dev_examples(data_dir), len(self.examples))
+
+        orig_domain_examples = processor.get_bc5cdr_train_examples(data_dir)
+        orig_domain_examples.extend(processor.get_bc5cdr_test_examples(data_dir))
+        orig_domain_examples.extend(processor.get_bc5cdr_dev_examples(data_dir))
+
+        if len(self.examples) <= len(orig_domain_examples):
+            orig_domain_examples = random.sample(orig_domain_examples, len(self.examples))
+        else:
+            self.examples = random.sample(self.examples, len(orig_domain_examples))
         # orig_domain_examples = processor.get_conll_train_examples(data_dir)
         self.examples.extend(orig_domain_examples)
 
