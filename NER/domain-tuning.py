@@ -35,7 +35,7 @@ from tqdm import tqdm, trange
 
 from pytorch_pretrained_bert.modeling import BertPreTrainedModel, BertModel, BertOnlyMLMHead, BertConfig, WEIGHTS_NAME, CONFIG_NAME
 from pytorch_pretrained_bert.tokenization import BertTokenizer
-from pytorch_pretrained_bert.optimization import BertAdam, warmup_linear
+from pytorch_pretrained_bert.optimization import BertAdam
 
 from torch.utils.data import Dataset
 import random
