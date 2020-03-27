@@ -185,7 +185,7 @@ class DataProcessor(object):
 
     def get_labels(self, data_dir):
         """See base class."""
-        return ['B', 'I', 'O']
+        return ['B-MATERIAL', 'I-MATERIAL', 'B-CODE', 'I-CODE', 'B-METHOD', 'I-METHOD', 'B-PARAMETER', 'I-PARAMETER', 'B-STRUCTURE', 'I-STRUCTURE','O']
 
     def _create_examples(self, data, set_type):
         """Creates examples for the training and dev sets."""
