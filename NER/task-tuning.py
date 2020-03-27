@@ -784,8 +784,8 @@ def main():
             #     writer.write("%s = %s\n" % (key, str(result[key])))
 
             for i,pred in enumerate(output_predictions):
-                tokens = test_examples[i][0]
-                true_labels = test_examples[i][1]
+                tokens = test_examples[i].text
+                true_labels = test_examples[i].label
 
                 for j,word in enumerate(tokens):
                     writer.write(word + ' ' + pred[j] + ' ' + true_labels[j] + '\n')
