@@ -748,7 +748,7 @@ def main():
             label_mask = label_mask.to(device)
 
             with torch.no_grad():
-                tmp_test_loss = model(input_ids, segment_ids, input_mask, label_list, label_mask)
+                tmp_test_loss = model(input_ids, segment_ids, input_mask, label_ids, label_mask)
                 logits = model(input_ids, segment_ids, input_mask)
 
             logits = logits.detach().cpu().numpy()
@@ -759,7 +759,7 @@ def main():
             tplist = true_and_pred(logits, label_ids, label_mask)
             for trues, preds in tplist:
                 output_predictions.append(preds)
-                TP, FP, FN = compute_tfpn(trues, preds, label_map, label_ids)
+                TP, FP, FN = compute_tfpn(trues, preds, label_map, label_list)
                 test_TP += TP
                 test_FP += FP
                 test_FN += FN
