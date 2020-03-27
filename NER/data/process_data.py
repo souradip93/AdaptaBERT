@@ -9,9 +9,16 @@ def raw2list(infile, dataset="conll"):
     nlflag = True
     for line in fin:
         line = line.strip()
+        if line.startswith('-DOCSTART-'):
+            continue
+
         if line == '':
             if not nlflag:
-                data_list.append((tokens, tags))
+                if dataset == "ikst":
+                    #Remove section and id information
+                    data_list.append((tokens[2:], tags[2:]))
+                else:
+                    data_list.append((tokens, tags))
                 tags = []
                 tokens = []
                 nlflag = True
@@ -25,6 +32,16 @@ def raw2list(infile, dataset="conll"):
             elif dataset == "twitter":
                 if len(parts) != 2:
                     raise NameError('twitter file parse error, please check again')
+                tokens.append(parts[0])
+                tags.append(parts[1])
+            elif dataset == "ikst":
+                if len(parts) != 2:
+                    raise NameError('ikst file parse error, please check again')
+                tokens.append(parts[0])
+                tags.append(parts[1])
+            elif dataset == "bc5cdr":
+                if len(parts) != 2:
+                    raise NameError('bc5cdr file parse error, please check again')
                 tokens.append(parts[0])
                 tags.append(parts[1])
             else:
@@ -91,6 +108,23 @@ if __name__ == '__main__':
 
         data_list = raw2list("../resources/twitter_ner/test_notypes", dataset="twitter")
         pickle.dump(data_list, open("twitter_test.pkl", 'wb'))
+
+
+    if op == "ikst":
+        data_list = raw2list("../resources/ikst_ner/train.txt", dataset="ikst")
+        pickle.dump(data_list, open("ikst_train.pkl", 'wb'))
+
+        data_list = raw2list("../resources/ikst_ner/test.txt", dataset="ikst")
+        pickle.dump(data_list, open("ikst_test.pkl", 'wb'))
+
+        data_list = raw2list("../resources/bc5cdr_ner/train.txt", dataset="bc5cdr")
+        pickle.dump(data_list, open("bc5cdr_train.pkl", 'wb'))
+
+        data_list = raw2list("../resources/bc5cdr_ner/test.txt", dataset="bc5cdr")
+        pickle.dump(data_list, open("bc5cdr_test.pkl", 'wb'))
+
+        data_list = raw2list("../resources/bc5cdr_ner/dev.txt", dataset="bc5cdr")
+        pickle.dump(data_list, open("bc5cdr_dev.pkl", 'wb'))
 
     if op == "general_twitter_text":
         data_list = general2list("../resources/twitter_general/tweets-en-2016.text", 1000000)
