@@ -41,6 +41,7 @@ def raw2list(infile, dataset="conll"):
                 tags.append(parts[1])
             elif dataset == "bc5cdr":
                 if len(parts) != 2:
+                    print(parts)
                     raise NameError('bc5cdr file parse error, please check again')
                 tokens.append(parts[0])
                 tags.append(parts[1])
