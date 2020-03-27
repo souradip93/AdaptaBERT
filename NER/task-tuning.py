@@ -787,8 +787,9 @@ def main():
                 tokens = test_examples[i].text
                 true_labels = test_examples[i].label
 
+                print(tokens)
+                print(len(tokens), len(pred))
                 for j,word in enumerate(tokens):
-                    print(pred[j], word)
                     writer.write(word + ' ' + label_list[pred[j]] + ' ' + true_labels[j] + '\n')
                 writer.write('\n')
 
