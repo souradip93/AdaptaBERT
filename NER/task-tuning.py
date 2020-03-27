@@ -311,7 +311,7 @@ def true_and_pred(out, label_ids, label_mask):
         tplist.append((trues, preds))
     return tplist
 
-def compute_tfpn(_trues, _preds, label_map):
+def compute_tfpn(_trues, _preds, label_map, label_ids):
     trues = _trues + [label_map['O']]
     preds = _preds + [label_map['O']]
 
@@ -321,30 +321,30 @@ def compute_tfpn(_trues, _preds, label_map):
     ent_start = -1
     for i, label in enumerate(trues):
         if ent_start == -1:
-            if label == label_map['B']:
+            if label_ids[label][0] == 'B':
                 ent_start = i
-            elif label == label_map['I']:
+            elif label_ids[label][0] == 'I':
                 assert 0 == 1 # should not occur in ground truth
         else:
-            if label == label_map['B']:
+            if label_ids[label][0] == 'B':
                 true_ent_list.append((ent_start, i))
                 ent_start = i
-            elif label == label_map['O']:
+            elif label_ids[label][0] == 'O':
                 true_ent_list.append((ent_start, i))
                 ent_start = -1
 
     ent_start = -1
     for i, label in enumerate(preds):
         if ent_start == -1:
-            if label == label_map['B']:
+            if label_ids[label][0] == 'B':
                 ent_start = i
-            elif label == label_map['I']:
+            elif label_ids[label][0] == 'I':
                 ent_start = i # entities in prediction might start with "I"
         else:
-            if label == label_map['B']:
+            if label_ids[label][0] == 'B':
                 pred_ent_list.append((ent_start, i))
                 ent_start = i
-            elif label == label_map['O']:
+            elif label_ids[label][0] == 'O':
                 pred_ent_list.append((ent_start, i))
                 ent_start = -1
 
@@ -714,7 +714,7 @@ def main():
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
     if args.do_test and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
-        test_examples = processor.get_ikst_test_examples(args.data_dir)
+        test_examples = processor.get_ikst_test_examples(args.data_dir)[:100]
         test_features = convert_examples_to_features(
             test_examples, label_list, args.max_seq_length, tokenizer)
         logger.info("***** Running final test *****")
@@ -756,7 +756,7 @@ def main():
             tplist = true_and_pred(logits, label_ids, label_mask)
             for trues, preds in tplist:
                 output_predictions.append(preds)
-                TP, FP, FN = compute_tfpn(trues, preds, label_map)
+                TP, FP, FN = compute_tfpn(trues, preds, label_map, label_ids)
                 test_TP += TP
                 test_FP += FP
                 test_FN += FN
