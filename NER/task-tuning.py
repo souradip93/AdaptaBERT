@@ -39,7 +39,7 @@ from tqdm import tqdm, trange
 from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE
 from pytorch_pretrained_bert.modeling import BertPreTrainedModel, BertModel, BertConfig, WEIGHTS_NAME, CONFIG_NAME
 from pytorch_pretrained_bert.tokenization import BertTokenizer
-from pytorch_pretrained_bert.optimization import BertAdam, warmup_linear
+from pytorch_pretrained_bert.optimization import BertAdam
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt = '%m/%d/%Y %H:%M:%S',
@@ -162,6 +162,26 @@ class DataProcessor(object):
         """See base class."""
         return self._create_examples(
             self._read_pkl(os.path.join(data_dir, "sep_twitter_test.pkl")), "twitter_test")
+
+    def get_ikst_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_pkl(os.path.join(data_dir, "ikst_train.pkl")), "ikst_train")
+
+    def get_ikst_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_pkl(os.path.join(data_dir, "ikst_test.pkl")), "ikst_test")
+
+    def get_bc5cdr_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_pkl(os.path.join(data_dir, "bc5cdr_train.pkl")), "bc5cdr_train")
+
+    def get_bc5cdr_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_pkl(os.path.join(data_dir, "bc5cdr_dev.pkl")), "bc5cdr_dev")
 
     def get_labels(self, data_dir):
         """See base class."""
@@ -495,9 +515,9 @@ def main():
     num_train_optimization_steps = None
     if args.do_train:
         if args.supervised_training:
-            train_examples = processor.get_sep_twitter_train_examples(args.data_dir)
+            train_examples = processor.get_ikst_train_examples(args.data_dir)
         else:
-            train_examples = processor.get_conll_train_examples(args.data_dir)
+            train_examples = processor.get_bc5cdr_train_examples(args.data_dir)
         num_train_optimization_steps = int(
             len(train_examples) / args.train_batch_size / args.gradient_accumulation_steps) * args.num_train_epochs
         if args.local_rank != -1:
@@ -630,7 +650,7 @@ def main():
             f.write(model_to_save.config.to_json_string())
 
     if args.do_eval and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
-        eval_examples = processor.get_conll_dev_examples(args.data_dir)
+        eval_examples = processor.get_bc5cdr_dev_examples(args.data_dir)
         eval_features = convert_examples_to_features(
             eval_examples, label_list, args.max_seq_length, tokenizer)
         logger.info("***** Running evaluation *****")
@@ -694,7 +714,7 @@ def main():
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
     if args.do_test and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
-        test_examples = processor.get_sep_twitter_test_examples(args.data_dir)
+        test_examples = processor.get_ikst_test_examples(args.data_dir)
         test_features = convert_examples_to_features(
             test_examples, label_list, args.max_seq_length, tokenizer)
         logger.info("***** Running final test *****")
