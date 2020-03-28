@@ -610,7 +610,7 @@ def main():
             tr_loss = 0
             nb_tr_examples, nb_tr_steps = 0, 0
             step = 0
-            for step in tqdm(train_dataloader):
+            for batch in tqdm(train_dataloader):
                 batch = tuple(t.to(device) for t in batch)
                 input_ids, input_mask, segment_ids, label_ids, label_mask = batch
                 loss = model(input_ids, segment_ids, input_mask, label_ids, label_mask)
