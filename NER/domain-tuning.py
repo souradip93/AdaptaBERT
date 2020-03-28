@@ -583,6 +583,7 @@ def main():
         for _ in trange(int(args.num_train_epochs), desc="Epoch"):
             tr_loss = 0
             nb_tr_examples, nb_tr_steps = 0, 0
+            total = len(train_dataloader)
             step = 0
             for batch in train_dataloader:
                 batch = tuple(t.to(device) for t in batch)
