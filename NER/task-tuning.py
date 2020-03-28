@@ -609,7 +609,8 @@ def main():
         for _ in trange(int(args.num_train_epochs), desc="Epoch"):
             tr_loss = 0
             nb_tr_examples, nb_tr_steps = 0, 0
-            for step, batch in enumerate(tqdm(train_dataloader)):
+            step = 0
+            for step in tqdm(train_dataloader):
                 batch = tuple(t.to(device) for t in batch)
                 input_ids, input_mask, segment_ids, label_ids, label_mask = batch
                 loss = model(input_ids, segment_ids, input_mask, label_ids, label_mask)
@@ -636,6 +637,7 @@ def main():
                     optimizer.step()
                     optimizer.zero_grad()
                     global_step += 1
+                step += 1
             if (args.local_rank == -1 or torch.distributed.get_rank() == 0) and args.save_all_epochs:
                 # Save a trained model and the associated configuration
                 model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
