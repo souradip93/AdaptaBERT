@@ -722,7 +722,7 @@ def main():
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
     if args.do_test and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
-        test_examples = processor.get_ikst_test_examples(args.data_dir)
+        test_examples = processor.get_ikst_test_examples(args.data_dir)[:100]
         test_features = convert_examples_to_features(
             test_examples, label_list, args.max_seq_length, tokenizer)
         logger.info("***** Running final test *****")
@@ -791,6 +791,10 @@ def main():
             for i,pred in enumerate(output_predictions):
                 tokens = test_examples[i].text
                 true_labels = test_examples[i].label
+
+                if len(true_labels) != len(pred):
+                    print(len(true_labels), len(pred))
+                    pred.extend([label_list.index('O')]*(len(true_labels) - len(pred)))
 
                 # print(tokens)
                 # print(len(tokens), len(pred))
