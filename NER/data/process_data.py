@@ -16,7 +16,7 @@ def raw2list(infile, dataset="conll"):
             if not nlflag:
                 if dataset == "ikst":
                     #Remove section and id information
-                    data_list.append((tokens[2:], tags[2:]))
+                    data_list.append((tokens[2:], tags[2:], tags[0], tags[1]))
                 else:
                     data_list.append((tokens, tags))
                 tags = []

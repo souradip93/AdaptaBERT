@@ -113,7 +113,7 @@ class MyBertForTokenClassification(BertPreTrainedModel):
 class InputExample(object):
     """A single training/test example for simple sequence classification."""
 
-    def __init__(self, guid, text, label=None):
+    def __init__(self, guid, text, label=None, section = None, id = None):
         """Constructs a InputExample.
         Args:
             guid: Unique id for the example.
@@ -127,6 +127,8 @@ class InputExample(object):
         self.guid = guid
         self.text = text # list of tokens
         self.label = label # list of labels
+        self.section = section
+        self.id = id
 
 
 class InputFeatures(object):
@@ -194,8 +196,14 @@ class DataProcessor(object):
             guid = "%s-%s" % (set_type, i)
             text = elem[0]
             label = elem[1]
-            examples.append(
-                InputExample(guid=guid, text=text, label=label))
+            if set_type == "ikst":
+                section = elem[2]
+                id = elem[3]
+                examples.append(
+                    InputExample(guid=guid, text=text, label=label, section=section, id=id))
+            else:
+                examples.append(
+                    InputExample(guid=guid, text=text, label=label))
         return examples
 
     def _read_pkl(self, input_file):
@@ -791,6 +799,8 @@ def main():
             for i,pred in enumerate(output_predictions):
                 tokens = test_examples[i].text
                 true_labels = test_examples[i].label
+                section = test_examples[i].section
+                id = test_examples[i].id
 
                 if len(true_labels) != len(pred):
                     print(len(true_labels), len(pred))
@@ -798,6 +808,8 @@ def main():
 
                 # print(tokens)
                 # print(len(tokens), len(pred))
+                writer.write("section " + section + "\n")
+                writer.write("id " + id + "\n")
                 for j,word in enumerate(tokens):
                     writer.write(word + ' ' + label_list[pred[j]] + ' ' + true_labels[j] + '\n')
                 writer.write('\n')
