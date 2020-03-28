@@ -640,7 +640,7 @@ def main():
                     global_step += 1
                 step += 1
                 if step % 100 == 0:
-                    print("%s / %s", str(step), str(total))
+                    print(str(step) + " / " + str(total))
             if (args.local_rank == -1 or torch.distributed.get_rank() == 0) and args.save_all_epochs:
                 # Save a trained model and the associated configuration
                 model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
