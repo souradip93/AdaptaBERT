@@ -196,7 +196,7 @@ class DataProcessor(object):
             guid = "%s-%s" % (set_type, i)
             text = elem[0]
             label = elem[1]
-            if set_type == "ikst":
+            if set_type.startswith("ikst"):
                 section = elem[2]
                 id = elem[3]
                 examples.append(
