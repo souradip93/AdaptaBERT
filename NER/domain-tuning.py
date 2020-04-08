@@ -23,7 +23,7 @@ import os
 import pickle
 from io import open
 
-os.environ['CUDA_VISIBLE_DEVICES'] = "0"
+os.environ['CUDA_VISIBLE_DEVICES'] = "1"
 mlm_cvg_hack = 10
 
 import numpy as np
