@@ -585,7 +585,7 @@ def main():
             nb_tr_examples, nb_tr_steps = 0, 0
             total = len(train_dataloader)
             step = 0
-            for batch in train_dataloader:
+            for batch in tqdm(train_dataloader):
                 batch = tuple(t.to(device) for t in batch)
                 input_ids, input_mask, segment_ids, lm_label_ids = batch
                 loss = model(input_ids, segment_ids, input_mask, lm_label_ids)
@@ -612,8 +612,8 @@ def main():
                     global_step += 1
 
                 step+=1
-                if step % step == 0:
-                    print(str(step) + " / " + str(total))
+                # if step % step == 0:
+                #     print(str(step) + " / " + str(total))
 
         # Save a trained model
         logger.info("** ** * Saving fine - tuned model ** ** * ")
