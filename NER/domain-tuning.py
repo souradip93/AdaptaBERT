@@ -612,7 +612,7 @@ def main():
                     global_step += 1
 
                 step+=1
-                if step % 100 == 0:
+                if step % step == 0:
                     print(str(step) + " / " + str(total))
 
         # Save a trained model
